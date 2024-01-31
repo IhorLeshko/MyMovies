@@ -26,4 +26,22 @@ class MMMovieImageView: UIImageView {
         image = moviePlaceholder
         translatesAutoresizingMaskIntoConstraints = false
     }
+    
+    func downloadImage(from urlString: String) {
+        guard let url = URL(string: MMConstants.posterHttp + MMConstants.posterLowQualtySetPath + urlString) else { return }
+        
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            if error != nil { return }
+            guard let response = response as? HTTPURLResponse, response.statusCode == 200 else { return }
+            guard let data = data else { return }
+            
+            guard let image = UIImage(data: data) else { return }
+            
+            DispatchQueue.main.async { [weak self] in
+                self?.image = image
+            }
+            
+        }
+        task.resume()
+    }
 }

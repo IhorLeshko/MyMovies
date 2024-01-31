@@ -10,13 +10,20 @@ import UIKit
 
 class MovieListVC: UIViewController {
     
+    var moviesList: [MMMovieResult] = []
+    
     var collectionView: UICollectionView!
     var dataSource: UICollectionViewDataSource!
+    var movieService = MMMovieService()
+    
+    var alertErrorMessage: String?
 
     override func viewDidLoad() {
         super.viewDidLoad()
         configureVC()
+        getMovies()
         configureCollectionView()
+        collectionView.reloadData()
     }
     
     private func configureVC() {
@@ -44,9 +51,25 @@ class MovieListVC: UIViewController {
         
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.sectionInset = UIEdgeInsets(top: padding, left: padding, bottom: padding, right: padding)
-        flowLayout.itemSize = CGSize(width: itemWidth, height: itemWidth + 40)
+        flowLayout.itemSize = CGSize(width: itemWidth, height: itemWidth + 80)
         
         return flowLayout
+    }
+    
+    private func getMovies() {
+        movieService.downloadData { data, error in
+            guard let data = data, error == nil else {
+                self.alertErrorMessage = error
+                return
+            }
+            
+            guard let movies = try? JSONDecoder().decode(MMMovie.self, from: data) else { return }
+            
+            DispatchQueue.main.async { [weak self] in
+                self?.moviesList = movies.results
+                self?.collectionView.reloadData()
+            }
+        }
     }
 
 }
@@ -57,11 +80,12 @@ extension MovieListVC: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return moviesList.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MMMovieCell.reuseID, for: indexPath) as! MMMovieCell
+        cell.set(movie: moviesList[indexPath.item])
         return cell
     }
 }
@@ -69,6 +93,9 @@ extension MovieListVC: UICollectionViewDataSource {
 extension MovieListVC: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let detailVC = MovieDetailsVC()
+        let selectedCell = collectionView.cellForItem(at: indexPath) as! MMMovieCell
+        guard let selectedTitle = selectedCell.movieLabelView.text else { return }
+        detailVC.movieTitle = selectedTitle
         navigationController?.pushViewController(detailVC, animated: true)
     }
 }

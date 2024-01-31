@@ -29,6 +29,7 @@ class MMTitleLabel: UILabel {
         textColor = .label
         adjustsFontSizeToFitWidth = true
         minimumScaleFactor = 0.9
+        numberOfLines = 2
         lineBreakMode = .byTruncatingTail
         translatesAutoresizingMaskIntoConstraints = false
     }

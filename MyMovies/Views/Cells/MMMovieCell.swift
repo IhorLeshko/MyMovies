@@ -22,6 +22,11 @@ class MMMovieCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func set(movie: MMMovieResult) {
+        movieLabelView.text = movie.title
+        movieImageView.downloadImage(from: movie.posterPath ?? "")
+    }
+    
     private func configure() {
         addSubview(movieImageView)
         addSubview(movieLabelView)
@@ -33,12 +38,12 @@ class MMMovieCell: UICollectionViewCell {
             movieImageView.topAnchor.constraint(equalTo: topAnchor, constant: padding),
             movieImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: padding),
             movieImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding),
-            movieImageView.heightAnchor.constraint(equalTo: movieImageView.widthAnchor),
+            movieImageView.heightAnchor.constraint(equalToConstant: 140),
             
             movieLabelView.topAnchor.constraint(equalTo: movieImageView.bottomAnchor, constant: 12),
             movieLabelView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: padding),
             movieLabelView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding),
-            movieLabelView.heightAnchor.constraint(equalToConstant: 20)
+            movieLabelView.heightAnchor.constraint(equalToConstant: 40)
         ])
     }
     
