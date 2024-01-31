@@ -20,8 +20,36 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
-        window?.rootViewController = MovieListVC()
+        window?.rootViewController = createTabBarController()
         window?.makeKeyAndVisible()
+        
+    }
+    
+    private func createMovieListNavigationController() -> UINavigationController {
+        let movieVC = MovieListVC()
+        
+        movieVC.title = "Most Viewed"
+        movieVC.tabBarItem = UITabBarItem(tabBarSystemItem: .mostViewed, tag: 0)
+        
+        return UINavigationController(rootViewController: movieVC)
+    }
+    
+    private func createFavouritesListNavigationController() -> UINavigationController {
+        let favouritesVC = FavouritesVC()
+        
+        favouritesVC.title = "Favourites"
+        favouritesVC.tabBarItem = UITabBarItem(tabBarSystemItem: .favorites, tag: 1)
+        
+        return UINavigationController(rootViewController: favouritesVC)
+    }
+    
+    private func createTabBarController() -> UITabBarController {
+        let tabbar = UITabBarController()
+        UITabBar.appearance().tintColor = .systemGreen
+        
+        tabbar.viewControllers = [createMovieListNavigationController(), createFavouritesListNavigationController()]
+        
+        return tabbar
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

@@ -9,10 +9,11 @@ import SwiftUI
 import UIKit
 
 class MovieListVC: UIViewController {
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .blue
+        view.backgroundColor = .systemBackground
     }
 
 
