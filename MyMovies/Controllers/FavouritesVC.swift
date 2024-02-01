@@ -9,20 +9,27 @@ import UIKit
 
 class FavouritesVC: UIViewController {
     
-    var movieService = MMMovieService()
-    var moviesGenres: [MMGenre] = []
+    private let viewModel: FavouritesVCViewModel
     
     var collectionView: UICollectionView!
     var dataSource: UICollectionViewDataSource!
-    var coreService = CoreManager.shared
-
+    
+    
+    init(_ viewModel: FavouritesVCViewModel = FavouritesVCViewModel()) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         configureVC()
         configureInfoButton()
         configureCollectionView()
-        getMoviesGenres()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -34,20 +41,6 @@ class FavouritesVC: UIViewController {
     
     private func configureVC() {
         view.backgroundColor = .systemBackground
-    }
-    
-    func getMoviesGenres() {
-        movieService.downloadData(dataType: .movieGenres) { data, error in
-            guard let data = data, error == nil else {
-                return
-            }
-            
-            guard let genres = try? JSONDecoder().decode(MMMovieGenres.self, from: data) else { return }
-            
-            DispatchQueue.main.async { [weak self] in
-                self?.moviesGenres = genres.genres
-            }
-        }
     }
     
     private func configureInfoButton() {
@@ -81,11 +74,11 @@ class FavouritesVC: UIViewController {
                 let point = gestureRecognizer.location(in: collectionView)
                 if let indexPath = collectionView.indexPathForItem(at: point) {
                     let selectedCell = collectionView.cellForItem(at: indexPath) as! MMMovieCell
-                    let selectedMovie = self.coreService.movies[indexPath.row]
+                    let selectedMovie = self.viewModel.coreService.movies[indexPath.row]
                     
                     let alert = UIAlertController(title: "Delete \(selectedCell.movieLabelView.text ?? "") from favourites?", message: "", preferredStyle: UIAlertController.Style.alert)
                     alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { action in
-                        self.coreService.deleteFavouriteMovie(movie: selectedMovie)
+                        self.viewModel.coreService.deleteFavouriteMovie(movie: selectedMovie)
                         self.collectionView.reloadData()
                     }))
                     alert.addAction(UIAlertAction(title: "No", style: .cancel))
@@ -118,12 +111,12 @@ extension FavouritesVC: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return coreService.movies.count
+        return viewModel.coreService.movies.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MMMovieCell.reuseID, for: indexPath) as! MMMovieCell
-        cell.setCoreData(movie: coreService.movies[indexPath.item])
+        cell.setCoreData(movie: viewModel.coreService.movies[indexPath.item])
         return cell
     }
 }
@@ -132,7 +125,6 @@ extension FavouritesVC: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let detailVC = MovieDetailsVC()
         let selectedCell = collectionView.cellForItem(at: indexPath) as! MMMovieCell
-        
         
         detailVC.movieLabel.text = selectedCell.movieLabelView.text
         detailVC.movieImage.image = selectedCell.movieImageView.image

@@ -10,24 +10,25 @@ import UIKit
 
 class MovieListVC: UIViewController {
     
-    var moviesList: [MMMovieResult] = []
-    var moviesGenres: [MMGenre] = []
+    private let viewModel: MovieListVCViewModel
     
     var collectionView: UICollectionView!
     var dataSource: UICollectionViewDataSource!
-    var movieService = MMMovieService()
-    var coreService = CoreManager.shared
     
-    var alertErrorMessage: String?
-
+    init(_ viewModel: MovieListVCViewModel = MovieListVCViewModel()) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureVC()
-        getMovies()
-        getGenres()
         configureCollectionView()
         configureInfoButton()
-        collectionView.reloadData()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -57,7 +58,7 @@ class MovieListVC: UIViewController {
         collectionView.delegate = self
         
         collectionView.addGestureRecognizer(longPressGesture)
-
+        
         view.addSubview(collectionView)
         
         collectionView.backgroundColor = .systemBackground
@@ -66,29 +67,26 @@ class MovieListVC: UIViewController {
     
     @objc private func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
         
-            if gestureRecognizer.state == .began {
-
-                let point = gestureRecognizer.location(in: collectionView)
-                if let indexPath = collectionView.indexPathForItem(at: point) {
-                    let selectedCell = collectionView.cellForItem(at: indexPath) as! MMMovieCell
-                    
-                    let alert = UIAlertController(title: "Save \(selectedCell.movieLabelView.text ?? "") to favourites?", message: "", preferredStyle: UIAlertController.Style.alert)
-                    alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { action in
-                        self.coreService.addNewFavouriteMovie(
-                            title: selectedCell.movieLabelView.text!,
-                            year: selectedCell.movieYear.text!,
-                            genre: self.findGenresFromIDs(moviesGenreIDs: selectedCell.movieGenre, allMoviesGenres: self.moviesGenres),
-                            image: selectedCell.movieImageView.image ?? UIImage())
-                    }))
-                    alert.addAction(UIAlertAction(title: "No", style: .cancel))
-                    
-                    self.present(alert, animated: true, completion: nil)
-                    
-                    print("Long press on item at section \(indexPath.section) and item \(indexPath.item)")
-
-                }
+        if gestureRecognizer.state == .began {
+            
+            let point = gestureRecognizer.location(in: collectionView)
+            if let indexPath = collectionView.indexPathForItem(at: point) {
+                let selectedCell = collectionView.cellForItem(at: indexPath) as! MMMovieCell
+                
+                let alert = UIAlertController(title: "Save \(selectedCell.movieLabelView.text ?? "") to favourites?", message: "", preferredStyle: UIAlertController.Style.alert)
+                alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { action in
+                    self.viewModel.addNewFavouriteMovie(
+                        title: selectedCell.movieLabelView.text!,
+                        year: selectedCell.movieYear.text!,
+                        genre: self.viewModel.findGenresFromIDs(moviesGenreIDs: selectedCell.movieGenre, allMoviesGenres: self.viewModel.moviesGenres),
+                        image: selectedCell.movieImageView.image ?? UIImage())
+                }))
+                alert.addAction(UIAlertAction(title: "No", style: .cancel))
+                
+                self.present(alert, animated: true, completion: nil)
             }
         }
+    }
     
     private func createThreeColumnFlowLayout() -> UICollectionViewFlowLayout {
         let width = view.bounds.width
@@ -103,51 +101,6 @@ class MovieListVC: UIViewController {
         
         return flowLayout
     }
-    
-    private func getMovies() {
-        movieService.downloadData(dataType: .topRatedMovies) { data, error in
-            guard let data = data, error == nil else {
-                self.alertErrorMessage = error
-                return
-            }
-            
-            guard let movies = try? JSONDecoder().decode(MMMovie.self, from: data) else { return }
-            
-            DispatchQueue.main.async { [weak self] in
-                self?.moviesList = movies.results
-                self?.collectionView.reloadData()
-            }
-        }
-    }
-    
-    private func getGenres() {
-        movieService.downloadData(dataType: .movieGenres) { data, error in
-            guard let data = data, error == nil else {
-                self.alertErrorMessage = error
-                return
-            }
-            
-            guard let genres = try? JSONDecoder().decode(MMMovieGenres.self, from: data) else { return }
-            
-            DispatchQueue.main.async { [weak self] in
-                self?.moviesGenres = genres.genres
-            }
-        }
-    }
-    
-    private func findGenresFromIDs(moviesGenreIDs: [Int], allMoviesGenres: [MMGenre]) -> String {
-        var genresIDsToName: [String] = []
-        
-        for id in moviesGenreIDs {
-            allMoviesGenres.forEach { genre in
-                if genre.id == id {
-                    genresIDsToName.append(genre.name)
-                }
-            }
-        }
-        return genresIDsToName.joined(separator: ", ")
-    }
-
 }
 
 extension MovieListVC: UICollectionViewDataSource {
@@ -156,12 +109,12 @@ extension MovieListVC: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return moviesList.count
+        return viewModel.moviesList.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MMMovieCell.reuseID, for: indexPath) as! MMMovieCell
-        cell.set(movie: moviesList[indexPath.item])
+        cell.set(movie: viewModel.moviesList[indexPath.item])
         return cell
     }
 }
