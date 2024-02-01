@@ -23,24 +23,65 @@ class MovieListVC: UIViewController {
         configureVC()
         getMovies()
         configureCollectionView()
+        configureInfoButton()
         collectionView.reloadData()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.prefersLargeTitles = true
+        tabBarController?.tabBar.isHidden = false
     }
     
     private func configureVC() {
         view.backgroundColor = .systemBackground
     }
     
+    private func configureInfoButton() {
+        let info = UIAction(title: "You can long tap on movie to delete it from Favourites", handler: {action in })
+        let infoButton : UIMenu = UIMenu(title: "", children: [info])
+        let rightBarButton = UIBarButtonItem(title: "", image: UIImage(systemName: "info.circle"), menu: infoButton)
+        
+        navigationItem.rightBarButtonItem = rightBarButton
+        
+    }
+    
     private func configureCollectionView() {
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
         collectionView = UICollectionView(frame: view.frame, collectionViewLayout: createThreeColumnFlowLayout())
         
         collectionView.dataSource = self
         collectionView.delegate = self
         
+        collectionView.addGestureRecognizer(longPressGesture)
+
         view.addSubview(collectionView)
         
         collectionView.backgroundColor = .systemBackground
         collectionView.register(MMMovieCell.self, forCellWithReuseIdentifier: MMMovieCell.reuseID)
     }
+    
+    @objc private func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
+        
+            if gestureRecognizer.state == .began {
+
+                let point = gestureRecognizer.location(in: collectionView)
+                if let indexPath = collectionView.indexPathForItem(at: point) {
+                    let selectedCell = collectionView.cellForItem(at: indexPath) as! MMMovieCell
+                    
+                    let alert = UIAlertController(title: "Save \(selectedCell.movieLabelView.text ?? "") to favourites?", message: "", preferredStyle: UIAlertController.Style.alert)
+                    alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { action in
+                        
+                    }))
+                    alert.addAction(UIAlertAction(title: "No", style: .cancel))
+                    
+                    self.present(alert, animated: true, completion: nil)
+                    
+                    print("Long press on item at section \(indexPath.section) and item \(indexPath.item)")
+
+                }
+            }
+        }
     
     private func createThreeColumnFlowLayout() -> UICollectionViewFlowLayout {
         let width = view.bounds.width
@@ -94,8 +135,12 @@ extension MovieListVC: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let detailVC = MovieDetailsVC()
         let selectedCell = collectionView.cellForItem(at: indexPath) as! MMMovieCell
-        guard let selectedTitle = selectedCell.movieLabelView.text else { return }
-        detailVC.movieTitle = selectedTitle
+        
+        detailVC.movieLabel.text = selectedCell.movieLabelView.text
+        detailVC.movieImage.image = selectedCell.movieImageView.image
+        detailVC.movieYear.text = selectedCell.movieYear.text
+        detailVC.movieDescription.text = selectedCell.movieDecription.text
+        
         navigationController?.pushViewController(detailVC, animated: true)
     }
 }

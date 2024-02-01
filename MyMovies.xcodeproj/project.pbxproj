@@ -24,6 +24,7 @@
 		C37DDBB82B6A79200081B91F /* MMConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = C37DDBB72B6A79200081B91F /* MMConstants.swift */; };
 		C37DDBBB2B6A7C180081B91F /* MMMovie.swift in Sources */ = {isa = PBXBuildFile; fileRef = C37DDBBA2B6A7C180081B91F /* MMMovie.swift */; };
 		C37DDBBD2B6A7D870081B91F /* HTTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = C37DDBBC2B6A7D870081B91F /* HTTP.swift */; };
+		C3D2C2612B6AADBA00BEDCA2 /* MMDetailsImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D2C2602B6AADBA00BEDCA2 /* MMDetailsImageView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +47,7 @@
 		C37DDBB72B6A79200081B91F /* MMConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MMConstants.swift; sourceTree = "<group>"; };
 		C37DDBBA2B6A7C180081B91F /* MMMovie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MMMovie.swift; sourceTree = "<group>"; };
 		C37DDBBC2B6A7D870081B91F /* HTTP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTP.swift; sourceTree = "<group>"; };
+		C3D2C2602B6AADBA00BEDCA2 /* MMDetailsImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MMDetailsImageView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,7 +118,7 @@
 			isa = PBXGroup;
 			children = (
 				C37DDBAB2B6A55660081B91F /* Cells */,
-				C37DDBB02B6A572C0081B91F /* MMTitleLabel.swift */,
+				C3D2C2602B6AADBA00BEDCA2 /* MMDetailsImageView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -126,6 +128,7 @@
 			children = (
 				C37DDBAC2B6A558F0081B91F /* MMMovieCell.swift */,
 				C37DDBAE2B6A56660081B91F /* MMMovieImageView.swift */,
+				C37DDBB02B6A572C0081B91F /* MMTitleLabel.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -219,6 +222,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C37DDBBD2B6A7D870081B91F /* HTTP.swift in Sources */,
+				C3D2C2612B6AADBA00BEDCA2 /* MMDetailsImageView.swift in Sources */,
 				C357A8C72B6A36AE007E1195 /* MovieListVC.swift in Sources */,
 				C37DDBB32B6A73DA0081B91F /* MovieDetailsVC.swift in Sources */,
 				C357A8C32B6A36AE007E1195 /* AppDelegate.swift in Sources */,

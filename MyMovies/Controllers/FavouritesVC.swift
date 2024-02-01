@@ -13,10 +13,20 @@ class FavouritesVC: UIViewController {
         super.viewDidLoad()
 
         configureVC()
+        configureInfoButton()
     }
     
     private func configureVC() {
         view.backgroundColor = .systemBackground
+    }
+    
+    private func configureInfoButton() {
+        let info = UIAction(title: "You can long tap on movie to delete it from Favourites", handler: {action in })
+        let infoButton : UIMenu = UIMenu(title: "", children: [info])
+        let rightBarButton = UIBarButtonItem(title: "", image: UIImage(systemName: "info.circle"), menu: infoButton)
+        
+        navigationItem.rightBarButtonItem = rightBarButton
+        
     }
 
 }
