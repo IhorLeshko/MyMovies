@@ -15,6 +15,7 @@ class MovieListVC: UIViewController {
     var collectionView: UICollectionView!
     var dataSource: UICollectionViewDataSource!
     var movieService = MMMovieService()
+    var coreService = CoreManager.shared
     
     var alertErrorMessage: String?
 
@@ -38,7 +39,7 @@ class MovieListVC: UIViewController {
     }
     
     private func configureInfoButton() {
-        let info = UIAction(title: "You can long tap on movie to delete it from Favourites", handler: {action in })
+        let info = UIAction(title: "You can long tap on movie to save it to Favourites", handler: {action in })
         let infoButton : UIMenu = UIMenu(title: "", children: [info])
         let rightBarButton = UIBarButtonItem(title: "", image: UIImage(systemName: "info.circle"), menu: infoButton)
         
@@ -71,7 +72,7 @@ class MovieListVC: UIViewController {
                     
                     let alert = UIAlertController(title: "Save \(selectedCell.movieLabelView.text ?? "") to favourites?", message: "", preferredStyle: UIAlertController.Style.alert)
                     alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { action in
-                        
+                        self.coreService.addNewFavouriteMovie(title: selectedCell.movieLabelView.text!, year: selectedCell.movieYear.text!, genre: selectedCell.movieGenre.text ?? "", image: selectedCell.movieImageView.image ?? UIImage())
                     }))
                     alert.addAction(UIAlertAction(title: "No", style: .cancel))
                     
