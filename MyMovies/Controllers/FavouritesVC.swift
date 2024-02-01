@@ -9,6 +9,9 @@ import UIKit
 
 class FavouritesVC: UIViewController {
     
+    var movieService = MMMovieService()
+    var moviesGenres: [MMGenre] = []
+    
     var collectionView: UICollectionView!
     var dataSource: UICollectionViewDataSource!
     var coreService = CoreManager.shared
@@ -19,6 +22,7 @@ class FavouritesVC: UIViewController {
         configureVC()
         configureInfoButton()
         configureCollectionView()
+        getMoviesGenres()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -30,6 +34,20 @@ class FavouritesVC: UIViewController {
     
     private func configureVC() {
         view.backgroundColor = .systemBackground
+    }
+    
+    func getMoviesGenres() {
+        movieService.downloadData(dataType: .movieGenres) { data, error in
+            guard let data = data, error == nil else {
+                return
+            }
+            
+            guard let genres = try? JSONDecoder().decode(MMMovieGenres.self, from: data) else { return }
+            
+            DispatchQueue.main.async { [weak self] in
+                self?.moviesGenres = genres.genres
+            }
+        }
     }
     
     private func configureInfoButton() {
@@ -73,8 +91,6 @@ class FavouritesVC: UIViewController {
                     alert.addAction(UIAlertAction(title: "No", style: .cancel))
                     
                     self.present(alert, animated: true, completion: nil)
-                    
-                    print("Long press on item at section \(indexPath.section) and item \(indexPath.item)")
 
                 }
             }
@@ -117,10 +133,11 @@ extension FavouritesVC: UICollectionViewDelegate {
         let detailVC = MovieDetailsVC()
         let selectedCell = collectionView.cellForItem(at: indexPath) as! MMMovieCell
         
+        
         detailVC.movieLabel.text = selectedCell.movieLabelView.text
         detailVC.movieImage.image = selectedCell.movieImageView.image
         detailVC.movieYear.text = selectedCell.movieYear.text
-        detailVC.movieDescription.text = selectedCell.movieGenre.text
+        detailVC.movieDescription.text = selectedCell.movieDecription.text
         
         navigationController?.pushViewController(detailVC, animated: true)
     }

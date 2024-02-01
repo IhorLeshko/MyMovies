@@ -14,11 +14,25 @@ class MMMovieService {
       "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5YTY4OTg0NDEzYWRkMWIxMTQ0MzAzYjQ2ZDU0M2Y2OCIsInN1YiI6IjY1NTQ4ZWVmOTY1M2Y2MTNmNjJhMzgzNCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.eJeK6hezCrhDCs1o8JLW15RlNcAEBG7LE_YtOE1WfYY"
     ]
     
-    func downloadData(completionHandler: @escaping (_ data: Data?, _ error: String?) -> ()) {
+    enum DataToFetch {
+        case topRatedMovies
+        case movieGenres
+    }
+    
+    func downloadData(dataType: DataToFetch, completionHandler: @escaping (_ data: Data?, _ error: String?) -> ()) {
         
-        guard let url = URL(string: MMConstants.http + MMConstants.topRatedMoviePath) else { return }
+        var url: URL?
         
-        var request = URLRequest(url: url)
+        switch dataType {
+        case .topRatedMovies:
+            url = URL(string: MMConstants.http + MMConstants.topRatedMoviePath)
+        case .movieGenres:
+            url = URL(string: MMConstants.http + MMConstants.movieGenresPath)
+        }
+        
+        guard let validURL = url else { return }
+        
+        var request = URLRequest(url: validURL)
                 
         request.httpMethod = HTTP.Method.get.rawValue
         request.allHTTPHeaderFields = headers

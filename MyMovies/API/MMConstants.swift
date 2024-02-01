@@ -10,6 +10,7 @@ import Foundation
 struct MMConstants {
     static let http = "https://api.themoviedb.org/"
     static let topRatedMoviePath = "3/movie/top_rated?page=1"
+    static let movieGenresPath = "3/genre/movie/list?language=en"
     static let posterHttp = "https://image.tmdb.org/t/p/"
     static let posterHightQualtySetPath = "w500"
     static let posterLowQualtySetPath = "w200"

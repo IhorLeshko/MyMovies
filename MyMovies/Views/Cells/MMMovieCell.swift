@@ -14,7 +14,7 @@ class MMMovieCell: UICollectionViewCell {
     let movieLabelView = MMTitleLabel(textAlignment: .center, fontSize: 16)
     let movieYear: UILabel = UILabel()
     let movieDecription: UILabel = UILabel()
-    let movieGenre: UILabel = UILabel()
+    var movieGenre: [Int] = []
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -30,13 +30,14 @@ class MMMovieCell: UICollectionViewCell {
         movieImageView.downloadImage(from: movie.posterPath ?? "")
         movieYear.text = movie.releaseDate
         movieDecription.text = movie.overview
+        movieGenre = movie.genreIDS
     }
     
     func setCoreData(movie: Movie) {
         movie.id = movie.id
         movieLabelView.text = movie.title
-        movieYear.text = movie.title
-        movieGenre.text = movie.genre
+        movieYear.text = movie.year
+        movieDecription.text = movie.genre
         movieImageView.image = movie.image
     }
     

@@ -11,6 +11,7 @@ import UIKit
 class MovieListVC: UIViewController {
     
     var moviesList: [MMMovieResult] = []
+    var moviesGenres: [MMGenre] = []
     
     var collectionView: UICollectionView!
     var dataSource: UICollectionViewDataSource!
@@ -23,6 +24,7 @@ class MovieListVC: UIViewController {
         super.viewDidLoad()
         configureVC()
         getMovies()
+        getGenres()
         configureCollectionView()
         configureInfoButton()
         collectionView.reloadData()
@@ -72,7 +74,11 @@ class MovieListVC: UIViewController {
                     
                     let alert = UIAlertController(title: "Save \(selectedCell.movieLabelView.text ?? "") to favourites?", message: "", preferredStyle: UIAlertController.Style.alert)
                     alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { action in
-                        self.coreService.addNewFavouriteMovie(title: selectedCell.movieLabelView.text!, year: selectedCell.movieYear.text!, genre: selectedCell.movieGenre.text ?? "", image: selectedCell.movieImageView.image ?? UIImage())
+                        self.coreService.addNewFavouriteMovie(
+                            title: selectedCell.movieLabelView.text!,
+                            year: selectedCell.movieYear.text!,
+                            genre: self.findGenresFromIDs(moviesGenreIDs: selectedCell.movieGenre, allMoviesGenres: self.moviesGenres),
+                            image: selectedCell.movieImageView.image ?? UIImage())
                     }))
                     alert.addAction(UIAlertAction(title: "No", style: .cancel))
                     
@@ -99,7 +105,7 @@ class MovieListVC: UIViewController {
     }
     
     private func getMovies() {
-        movieService.downloadData { data, error in
+        movieService.downloadData(dataType: .topRatedMovies) { data, error in
             guard let data = data, error == nil else {
                 self.alertErrorMessage = error
                 return
@@ -112,6 +118,34 @@ class MovieListVC: UIViewController {
                 self?.collectionView.reloadData()
             }
         }
+    }
+    
+    private func getGenres() {
+        movieService.downloadData(dataType: .movieGenres) { data, error in
+            guard let data = data, error == nil else {
+                self.alertErrorMessage = error
+                return
+            }
+            
+            guard let genres = try? JSONDecoder().decode(MMMovieGenres.self, from: data) else { return }
+            
+            DispatchQueue.main.async { [weak self] in
+                self?.moviesGenres = genres.genres
+            }
+        }
+    }
+    
+    private func findGenresFromIDs(moviesGenreIDs: [Int], allMoviesGenres: [MMGenre]) -> String {
+        var genresIDsToName: [String] = []
+        
+        for id in moviesGenreIDs {
+            allMoviesGenres.forEach { genre in
+                if genre.id == id {
+                    genresIDsToName.append(genre.name)
+                }
+            }
+        }
+        return genresIDsToName.joined(separator: ", ")
     }
 
 }
@@ -141,6 +175,7 @@ extension MovieListVC: UICollectionViewDelegate {
         detailVC.movieImage.image = selectedCell.movieImageView.image
         detailVC.movieYear.text = selectedCell.movieYear.text
         detailVC.movieDescription.text = selectedCell.movieDecription.text
+        
         
         navigationController?.pushViewController(detailVC, animated: true)
     }

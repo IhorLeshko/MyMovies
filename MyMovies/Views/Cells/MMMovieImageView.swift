@@ -30,7 +30,7 @@ class MMMovieImageView: UIImageView {
     func downloadImage(from urlString: String) {
         guard let url = URL(string: MMConstants.posterHttp + MMConstants.posterLowQualtySetPath + urlString) else { return }
         
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+        URLSession.shared.dataTask(with: url) { data, response, error in
             if error != nil { return }
             guard let response = response as? HTTPURLResponse, response.statusCode == 200 else { return }
             guard let data = data else { return }
@@ -42,6 +42,6 @@ class MMMovieImageView: UIImageView {
             }
             
         }
-        task.resume()
+        .resume()
     }
 }

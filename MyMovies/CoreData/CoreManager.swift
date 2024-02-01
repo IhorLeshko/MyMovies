@@ -50,15 +50,18 @@ class CoreManager {
     }
     
     func addNewFavouriteMovie(title: String, year: String, genre: String, image: UIImage) {
-        let movie = Movie(context: persistentContainer.viewContext)
-        movie.id = UUID().uuidString
-        movie.title = title
-        movie.year = year
-        movie.genre = genre
-        movie.image = image
-        
-        saveContext()
-        fetchFavouritesMovies()
+        if !movies.contains(where: { $0.title == title }) {
+            let movie = Movie(context: persistentContainer.viewContext)
+            
+            movie.id = UUID().uuidString
+            movie.title = title
+            movie.year = year
+            movie.image = image
+            movie.genre = genre
+            
+            saveContext()
+            fetchFavouritesMovies()
+        }
     }
     
     func deleteFavouriteMovie(movie: Movie) {

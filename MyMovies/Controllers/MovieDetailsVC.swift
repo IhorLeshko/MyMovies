@@ -14,6 +14,7 @@ class MovieDetailsVC: UIViewController {
     var movieLabel: UILabel = MMTitleLabel(textAlignment: .center, fontSize: 40)
     var movieDescription: UILabel = MMTitleLabel(textAlignment: .center, fontSize: 16)
     var movieYear: UILabel = MMTitleLabel(textAlignment: .center, fontSize: 20)
+    var movieGenre: [Int] = []
     
     
     private let scrollView: UIScrollView = UIScrollView()
@@ -25,7 +26,6 @@ class MovieDetailsVC: UIViewController {
         
         configureVC()
         configureUI()
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
