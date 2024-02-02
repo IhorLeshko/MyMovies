@@ -29,33 +29,7 @@ class MovieListVC: UIViewController {
         configureVC()
         configureCollectionView()
         configureInfoButton()
-        
-        self.viewModel.onMoviesUpdated = { [weak self] in
-            DispatchQueue.main.async {
-                self?.collectionView.reloadData()
-            }
-        }
-        
-        self.viewModel.onErrorMessage = { [weak self] error in
-            DispatchQueue.main.async {
-                let alert = UIAlertController(title: error, message: nil, preferredStyle: .alert)
-                let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
-                let retryAction = UIAlertAction(title: "Retry", style: .default, handler: { _ in
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
-                        self?.viewModel.getGenres()
-                        self?.viewModel.getMovies()
-                    }
-                })
-                
-                cancelAction.setValue(UIColor.systemGreen, forKey: "titleTextColor")
-                retryAction.setValue(UIColor.systemGreen, forKey: "titleTextColor")
-                
-                alert.addAction(cancelAction)
-                alert.addAction(retryAction)
-                
-                self?.present(alert, animated: true, completion: nil)
-            }
-        }
+        configureMoviesListCallback()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -100,23 +74,7 @@ class MovieListVC: UIViewController {
             if let indexPath = collectionView.indexPathForItem(at: point) {
                 let selectedCell = collectionView.cellForItem(at: indexPath) as! MMMovieCell
                 
-                let alert = UIAlertController(title: "Save \(selectedCell.movieLabelView.text ?? "") to favourites?", message: "", preferredStyle: UIAlertController.Style.alert)
-                
-                let yesAction = UIAlertAction(title: "Yes", style: .default, handler: { action in
-                    self.viewModel.addNewFavouriteMovie(
-                        title: selectedCell.movieLabelView.text!,
-                        year: selectedCell.movieYear.text!,
-                        genre: self.viewModel.findGenresFromIDs(moviesGenreIDs: selectedCell.movieGenre, allMoviesGenres: self.viewModel.moviesGenres),
-                        image: selectedCell.movieImageView.imageData)
-                })
-                
-                let noAction = UIAlertAction(title: "No", style: .destructive)
-                
-                yesAction.setValue(UIColor.systemGreen, forKey: "titleTextColor")
-                alert.addAction(yesAction)
-                alert.addAction(noAction)
-                
-                self.present(alert, animated: true, completion: nil)
+                longPressAddMovieToCoreDataAlert(forCell: selectedCell)
             }
         }
     }
@@ -133,6 +91,57 @@ class MovieListVC: UIViewController {
         flowLayout.itemSize = CGSize(width: itemWidth, height: itemWidth + 80)
         
         return flowLayout
+    }
+    
+    private func longPressAddMovieToCoreDataAlert(forCell cell: MMMovieCell) {
+        let alert = UIAlertController(title: "Save \(cell.movieLabelView.text ?? "") to favourites?", message: "", preferredStyle: UIAlertController.Style.alert)
+        
+        let yesAction = UIAlertAction(title: "Yes", style: .default, handler: { action in
+            self.viewModel.addNewFavouriteMovie(
+                title: cell.movieLabelView.text!,
+                year: cell.movieYear.text!,
+                genre: self.viewModel.findGenresFromIDs(moviesGenreIDs: cell.movieGenre, allMoviesGenres: self.viewModel.moviesGenres),
+                image: cell.movieImageView.imageData)
+        })
+        
+        let noAction = UIAlertAction(title: "No", style: .destructive)
+        
+        yesAction.setValue(UIColor.systemGreen, forKey: "titleTextColor")
+        alert.addAction(yesAction)
+        alert.addAction(noAction)
+        
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    private func configureErrorAlert(forError error: String) {
+        let alert = UIAlertController(title: error, message: nil, preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+        let retryAction = UIAlertAction(title: "Retry", style: .default, handler: { _ in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+                self?.viewModel.getGenres()
+                self?.viewModel.getMovies()
+            }
+        })
+        
+        cancelAction.setValue(UIColor.systemGreen, forKey: "titleTextColor")
+        retryAction.setValue(UIColor.systemGreen, forKey: "titleTextColor")
+        
+        alert.addAction(cancelAction)
+        alert.addAction(retryAction)
+        
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    private func configureMoviesListCallback() {
+        self.viewModel.onMoviesUpdated = { [weak self] in
+            DispatchQueue.main.async {
+                self?.collectionView.reloadData()
+            }
+        }
+        
+        self.viewModel.onErrorMessage = { [weak self] error in
+            self?.configureErrorAlert(forError: error)
+        }
     }
 }
 

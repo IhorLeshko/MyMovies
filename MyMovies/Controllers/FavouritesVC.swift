@@ -30,19 +30,14 @@ class FavouritesVC: UIViewController {
         configureVC()
         configureInfoButton()
         configureCollectionView()
-        
-        self.viewModel.onMovieArrayUpdated = { [weak self] in
-            DispatchQueue.main.async {
-                self?.collectionView.reloadData()
-            }
-        }
+        configureCoreDataMoviesListCallback()
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.prefersLargeTitles = true
         tabBarController?.tabBar.isHidden = false
-        collectionView.reloadData()
     }
     
     private func configureVC() {
@@ -82,21 +77,7 @@ class FavouritesVC: UIViewController {
                     let selectedCell = collectionView.cellForItem(at: indexPath) as! MMMovieCell
                     let selectedMovie = self.viewModel.coreDataMovies[indexPath.row]
                     
-                    let alert = UIAlertController(title: "Delete \(selectedCell.movieLabelView.text ?? "") from favourites?", message: "", preferredStyle: UIAlertController.Style.alert)
-                    
-                    let yesAction = UIAlertAction(title: "Yes", style: .default, handler: { action in
-                        self.viewModel.deleteFavouriteMovie(movie: selectedMovie)
-                        self.collectionView.reloadData()
-                    })
-                    
-                    let noAction = UIAlertAction(title: "No", style: .destructive)
-                    
-                    yesAction.setValue(UIColor.systemGreen, forKey: "titleTextColor")
-                    alert.addAction(yesAction)
-                    alert.addAction(noAction)
-                    
-                    self.present(alert, animated: true, completion: nil)
-
+                    longPressDeleteFromCoreDataAlert(forCell: selectedCell, forMovie: selectedMovie)
                 }
             }
         }
@@ -113,6 +94,31 @@ class FavouritesVC: UIViewController {
         flowLayout.itemSize = CGSize(width: itemWidth, height: itemWidth + 80)
         
         return flowLayout
+    }
+    
+    private func longPressDeleteFromCoreDataAlert(forCell cell: MMMovieCell, forMovie movie: Movie) {
+        let alert = UIAlertController(title: "Delete \(cell.movieLabelView.text ?? "") from favourites?", message: "", preferredStyle: UIAlertController.Style.alert)
+        
+        let yesAction = UIAlertAction(title: "Yes", style: .default, handler: { action in
+            self.viewModel.deleteFavouriteMovie(movie: movie)
+            self.collectionView.reloadData()
+        })
+        
+        let noAction = UIAlertAction(title: "No", style: .destructive)
+        
+        yesAction.setValue(UIColor.systemGreen, forKey: "titleTextColor")
+        alert.addAction(yesAction)
+        alert.addAction(noAction)
+        
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    private func configureCoreDataMoviesListCallback() {
+        self.viewModel.onMovieArrayUpdated = { [weak self] in
+            DispatchQueue.main.async {
+                self?.collectionView.reloadData()
+            }
+        }
     }
 
 }
