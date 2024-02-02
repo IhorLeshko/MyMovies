@@ -39,7 +39,6 @@ class MMMovieService {
         
         URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data, error == nil else {
-                print("error downloading data \(String(describing: error?.localizedDescription))")
                 completionHandler(nil, "Error downloading data, check internet connection")
                 return
             }

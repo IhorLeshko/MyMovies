@@ -28,7 +28,7 @@ class MMMovieImageView: UIImageView {
     }
     
     func downloadImage(from urlString: String) {
-        guard let url = URL(string: MMConstants.posterHttp + MMConstants.posterLowQualtySetPath + urlString) else { return }
+        guard let url = URL(string: MMConstants.posterHttp + MMConstants.posterHightQualtySetPath + urlString) else { return }
         
         URLSession.shared.dataTask(with: url) { data, response, error in
             if error != nil { return }

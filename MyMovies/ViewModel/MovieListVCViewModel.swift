@@ -13,15 +13,20 @@ class MovieListVCViewModel {
     private let movieService = MMMovieService()
     
     var onMoviesUpdated: (()->Void)?
-    var onErrorMessage: ((String)->Void)?
+    var onErrorMessage: (()->Void)?
     
-    var alertErrorMessage: String?
+    private(set) var alertErrorMessage: String? = "" {
+        didSet {
+            self.onErrorMessage?()
+        }
+    }
     
     private(set) var moviesList: [MMMovieResult] = [] {
         didSet {
             self.onMoviesUpdated?()
         }
     }
+    
     private(set) var moviesGenres: [MMGenre] = []
     
     
@@ -46,14 +51,17 @@ class MovieListVCViewModel {
     func getMovies() {
         movieService.downloadData(dataType: .topRatedMovies) { data, error in
             guard let data = data, error == nil else {
-                self.alertErrorMessage = error
-                self.onErrorMessage?(error!)
+                DispatchQueue.main.async { [weak self] in
+                    self?.alertErrorMessage = error
+                }
                 return
             }
             
             guard let movies = try? JSONDecoder().decode(MMMovie.self, from: data) else { return }
             
-            self.moviesList = movies.results
+            DispatchQueue.main.async { [weak self] in
+                self?.moviesList = movies.results
+            }
                 
         }
     }

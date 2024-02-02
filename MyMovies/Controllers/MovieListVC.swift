@@ -29,6 +29,25 @@ class MovieListVC: UIViewController {
         configureVC()
         configureCollectionView()
         configureInfoButton()
+        
+        self.viewModel.onMoviesUpdated = { [weak self] in
+            DispatchQueue.main.async {
+                self?.collectionView.reloadData()
+            }
+        }
+        
+        self.viewModel.onErrorMessage = {
+            DispatchQueue.main.async {
+                let alert = UIAlertController(title: "Server Error", message: "Internet", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Retry", style: .default, handler: { _ in
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+                        self?.viewModel.getGenres()
+                        self?.viewModel.getMovies()
+                    }
+                }))
+                self.present(alert, animated: true, completion: nil)
+            }
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
