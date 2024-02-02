@@ -94,7 +94,7 @@ class MovieDetailsVC: UIViewController {
         NSLayoutConstraint.activate([
             movieImage.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             movieImage.topAnchor.constraint(equalTo: movieLabel.bottomAnchor, constant: 40),
-            movieImage.heightAnchor.constraint(equalToConstant: 330),
+            movieImage.heightAnchor.constraint(equalToConstant: 360),
             movieImage.widthAnchor.constraint(equalToConstant: 250)
         ])
     }

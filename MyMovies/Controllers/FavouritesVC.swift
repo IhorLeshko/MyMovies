@@ -30,6 +30,12 @@ class FavouritesVC: UIViewController {
         configureVC()
         configureInfoButton()
         configureCollectionView()
+        
+        self.viewModel.onMovieArrayUpdated = { [weak self] in
+            DispatchQueue.main.async {
+                self?.collectionView.reloadData()
+            }
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -74,14 +80,20 @@ class FavouritesVC: UIViewController {
                 let point = gestureRecognizer.location(in: collectionView)
                 if let indexPath = collectionView.indexPathForItem(at: point) {
                     let selectedCell = collectionView.cellForItem(at: indexPath) as! MMMovieCell
-                    let selectedMovie = self.viewModel.coreService.movies[indexPath.row]
+                    let selectedMovie = self.viewModel.coreDataMovies[indexPath.row]
                     
                     let alert = UIAlertController(title: "Delete \(selectedCell.movieLabelView.text ?? "") from favourites?", message: "", preferredStyle: UIAlertController.Style.alert)
-                    alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { action in
-                        self.viewModel.coreService.deleteFavouriteMovie(movie: selectedMovie)
+                    
+                    let yesAction = UIAlertAction(title: "Yes", style: .default, handler: { action in
+                        self.viewModel.deleteFavouriteMovie(movie: selectedMovie)
                         self.collectionView.reloadData()
-                    }))
-                    alert.addAction(UIAlertAction(title: "No", style: .cancel))
+                    })
+                    
+                    let noAction = UIAlertAction(title: "No", style: .destructive)
+                    
+                    yesAction.setValue(UIColor.systemGreen, forKey: "titleTextColor")
+                    alert.addAction(yesAction)
+                    alert.addAction(noAction)
                     
                     self.present(alert, animated: true, completion: nil)
 
@@ -111,12 +123,12 @@ extension FavouritesVC: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.coreService.movies.count
+        return viewModel.coreDataMovies.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MMMovieCell.reuseID, for: indexPath) as! MMMovieCell
-        cell.setCoreData(movie: viewModel.coreService.movies[indexPath.item])
+        cell.setCoreData(movie: viewModel.coreDataMovies[indexPath.item])
         return cell
     }
 }

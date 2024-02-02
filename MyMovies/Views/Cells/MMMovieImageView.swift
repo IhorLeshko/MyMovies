@@ -10,6 +10,7 @@ import UIKit
 class MMMovieImageView: UIImageView {
 
     let moviePlaceholder = UIImage(named: "MoviePlaceholder")
+    var imageData: Data = Data()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -36,6 +37,8 @@ class MMMovieImageView: UIImageView {
             guard let data = data else { return }
             
             guard let image = UIImage(data: data) else { return }
+            
+            self.imageData = data
             
             DispatchQueue.main.async { [weak self] in
                 self?.image = image

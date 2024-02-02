@@ -3,7 +3,7 @@
     <entity name="Movie" representedClassName="Movie" syncable="YES">
         <attribute name="genre" optional="YES" attributeType="String"/>
         <attribute name="id" attributeType="String"/>
-        <attribute name="image" optional="YES" attributeType="Transformable" valueTransformerName="ImageTransformer" customClassName="UIImage">
+        <attribute name="image" optional="YES" attributeType="Binary" valueTransformerName="ImageTransformer" customClassName="UIImage">
             <userInfo>
                 <entry key="kefrz-transformery" value="ImageTransformer"/>
             </userInfo>

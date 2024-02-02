@@ -36,16 +36,24 @@ class MovieListVC: UIViewController {
             }
         }
         
-        self.viewModel.onErrorMessage = {
+        self.viewModel.onErrorMessage = { [weak self] error in
             DispatchQueue.main.async {
-                let alert = UIAlertController(title: "Server Error", message: "Internet", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Retry", style: .default, handler: { _ in
+                let alert = UIAlertController(title: error, message: nil, preferredStyle: .alert)
+                let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+                let retryAction = UIAlertAction(title: "Retry", style: .default, handler: { _ in
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
                         self?.viewModel.getGenres()
                         self?.viewModel.getMovies()
                     }
-                }))
-                self.present(alert, animated: true, completion: nil)
+                })
+                
+                cancelAction.setValue(UIColor.systemGreen, forKey: "titleTextColor")
+                retryAction.setValue(UIColor.systemGreen, forKey: "titleTextColor")
+                
+                alert.addAction(cancelAction)
+                alert.addAction(retryAction)
+                
+                self?.present(alert, animated: true, completion: nil)
             }
         }
     }
@@ -93,14 +101,20 @@ class MovieListVC: UIViewController {
                 let selectedCell = collectionView.cellForItem(at: indexPath) as! MMMovieCell
                 
                 let alert = UIAlertController(title: "Save \(selectedCell.movieLabelView.text ?? "") to favourites?", message: "", preferredStyle: UIAlertController.Style.alert)
-                alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { action in
+                
+                let yesAction = UIAlertAction(title: "Yes", style: .default, handler: { action in
                     self.viewModel.addNewFavouriteMovie(
                         title: selectedCell.movieLabelView.text!,
                         year: selectedCell.movieYear.text!,
                         genre: self.viewModel.findGenresFromIDs(moviesGenreIDs: selectedCell.movieGenre, allMoviesGenres: self.viewModel.moviesGenres),
-                        image: selectedCell.movieImageView.image ?? UIImage())
-                }))
-                alert.addAction(UIAlertAction(title: "No", style: .cancel))
+                        image: selectedCell.movieImageView.imageData)
+                })
+                
+                let noAction = UIAlertAction(title: "No", style: .destructive)
+                
+                yesAction.setValue(UIColor.systemGreen, forKey: "titleTextColor")
+                alert.addAction(yesAction)
+                alert.addAction(noAction)
                 
                 self.present(alert, animated: true, completion: nil)
             }

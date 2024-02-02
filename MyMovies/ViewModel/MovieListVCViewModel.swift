@@ -9,15 +9,15 @@ import Foundation
 import UIKit
 
 class MovieListVCViewModel {
-    let coreService = CoreManager.shared
+    private let coreService = CoreManager.shared
     private let movieService = MMMovieService()
     
     var onMoviesUpdated: (()->Void)?
-    var onErrorMessage: (()->Void)?
+    var onErrorMessage: ((String)->Void)?
     
     private(set) var alertErrorMessage: String? = "" {
         didSet {
-            self.onErrorMessage?()
+            self.onErrorMessage?(alertErrorMessage ?? "")
         }
     }
     
@@ -81,7 +81,7 @@ class MovieListVCViewModel {
         }
     }
     
-    func addNewFavouriteMovie(title: String, year: String, genre: String, image: UIImage) {
+    func addNewFavouriteMovie(title: String, year: String, genre: String, image: Data) {
         coreService.addNewFavouriteMovie(title: title, year: year, genre: genre, image: image)
     }
 }

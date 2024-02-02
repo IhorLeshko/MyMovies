@@ -8,10 +8,28 @@
 import Foundation
 
 class FavouritesVCViewModel {
+    private var coreService = CoreManager.shared
+    var onMovieArrayUpdated: (()->Void)?
     
-    var movieService = MMMovieService()
-    var coreService = CoreManager.shared
+    var coreDataMovies: [Movie] = [] {
+        didSet {
+            self.onMovieArrayUpdated?()
+        }
+    }
     
-    private(set) var moviesGenres: [MMGenre] = []
+    init() {
+        coreService.arrayUpdateCallback = { [weak self] newMovies in
+            self?.coreDataMovies = newMovies
+        }
+        coreDataMovies = coreService.movies
+    }
     
+    func deleteFavouriteMovie(movie: Movie) {
+        coreService.deleteFavouriteMovie(movie: movie)
+        updateCoreDataMovies()
+    }
+    
+    func updateCoreDataMovies() {
+        self.coreDataMovies = coreService.movies
+    }
 }

@@ -21,7 +21,7 @@ extension Movie {
     @NSManaged public var title: String
     @NSManaged public var year: String
     @NSManaged public var genre: String
-    @NSManaged public var image: UIImage?
+    @NSManaged public var image: Data?
 
 }
 

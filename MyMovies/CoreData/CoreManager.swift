@@ -11,16 +11,20 @@ import UIKit
 
 class CoreManager {
     static let shared = CoreManager()
-    var movies: [Movie] = []
+    
+    var movies: [Movie] = [] {
+        didSet {
+            self.arrayUpdateCallback?(movies)
+        }
+    }
+    
+    var arrayUpdateCallback: (([Movie]) -> Void)?
     
     private init() {
-        
         fetchFavouritesMovies()
     }
     
     lazy var persistentContainer: NSPersistentContainer = {
-        ValueTransformer.setValueTransformer(ImageTransformer(), forName: NSValueTransformerName("ImageTransformer"))
-        
         let container = NSPersistentContainer(name: "MyMovies")
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
@@ -49,7 +53,7 @@ class CoreManager {
         }
     }
     
-    func addNewFavouriteMovie(title: String, year: String, genre: String, image: UIImage) {
+    func addNewFavouriteMovie(title: String, year: String, genre: String, image: Data) {
         if !movies.contains(where: { $0.title == title }) {
             let movie = Movie(context: persistentContainer.viewContext)
             
@@ -68,5 +72,9 @@ class CoreManager {
         persistentContainer.viewContext.delete(movie)
         try? persistentContainer.viewContext.save()
         fetchFavouritesMovies()
+    }
+    
+    func updateMovies(_ newMovies: [Movie]) {
+        movies = newMovies
     }
 }

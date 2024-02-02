@@ -38,7 +38,7 @@ class MMMovieCell: UICollectionViewCell {
         movieLabelView.text = movie.title
         movieYear.text = movie.year
         movieDecription.text = movie.genre
-        movieImageView.image = movie.image
+        movieImageView.image = UIImage(data: movie.image!)
     }
     
     private func configure() {
