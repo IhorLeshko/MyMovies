@@ -7,8 +7,8 @@ MyMovies is a mobile application designed to allow users to explore, discover, a
 ## ScreenShots
 
 <p align="center">
-      <img width="430" alt="Screenshot 2024-03-15 at 14 29 09" src="https://github.com/IhorLeshko/MyMovies/assets/88483745/a3682ecf-1ebe-42db-87d5-d0bdc2216d0d" align="left">
-      <img width="430" alt="Screenshot 2024-03-15 at 14 29 21" src="https://github.com/IhorLeshko/MyMovies/assets/88483745/fabf31d1-018a-44fe-9d48-22c9d8f7fb83" align="left">
+      <img width="400" alt="Screenshot 2024-03-15 at 14 29 09" src="https://github.com/IhorLeshko/MyMovies/assets/88483745/a3682ecf-1ebe-42db-87d5-d0bdc2216d0d" align="left">
+      <img width="400" alt="Screenshot 2024-03-15 at 14 29 21" src="https://github.com/IhorLeshko/MyMovies/assets/88483745/fabf31d1-018a-44fe-9d48-22c9d8f7fb83" align="left">
 </p>
 
 ## Technology Stack
