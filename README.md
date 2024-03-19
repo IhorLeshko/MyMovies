@@ -33,8 +33,6 @@ In this project, communication between ViewModel and View is implemented using c
 
 - **ViewModel**: Features the ViewModel classes like [`FavouritesVCViewModel`](MyMovies/ViewModel/FavouritesVCViewModel.swift) that bridge the view and model, handling the presentation logic and state management.
 
-- **Preview Helpers**: Contains SwiftUI preview providers such as [`SwiftUIPreviewView`](MyMovies/Preview_Helpers/SwiftUIPreviewView.swift) and [`SwiftUIPreviewVC`](MyMovies/Preview_Helpers/SwiftUIPreviewVC.swift) for leveraging SwiftUI previews in a UIKit project.
-
 ## Getting Started
 
 To get started with MyMovies, you'll need Xcode installed on your macOS system. Clone the repository, open the project in Xcode, and run it on your preferred simulator or physical iOS device.
