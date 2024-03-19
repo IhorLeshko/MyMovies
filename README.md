@@ -33,7 +33,7 @@ In this project, communication between ViewModel and View is implemented using c
 
 - **ViewModel**: Features the ViewModel classes like [`FavouritesVCViewModel`](MyMovies/ViewModel/FavouritesVCViewModel.swift) that bridge the view and model, handling the presentation logic and state management.
 
-- **Preview Helpers**: Contains SwiftUI preview providers such as [`SwiftUIPreviewView`](MyMovies/Preview Helpers/SwiftUIPreviewView.swift) and [`SwiftUIPreviewVC`](MyMovies/Preview Helpers/SwiftUIPreviewVC.swift) for leveraging SwiftUI previews in a UIKit project.
+- **Preview Helpers**: Contains SwiftUI preview providers such as [`SwiftUIPreviewView`](MyMovies/Preview_Helpers/SwiftUIPreviewView.swift) and [`SwiftUIPreviewVC`](MyMovies/Preview_Helpers/SwiftUIPreviewVC.swift) for leveraging SwiftUI previews in a UIKit project.
 
 ## Getting Started
 
