@@ -37,8 +37,6 @@ In this project, communication between ViewModel and View is implemented using c
 
 To get started with MyMovies, you'll need Xcode installed on your macOS system. Clone the repository, open the project in Xcode, and run it on your preferred simulator or physical iOS device.
 
-For more detailed setup instructions and contributing guidelines, please refer to the documentation provided within the repository.
-
 ## Conclusion
 
-MyMovies is an iOS application built using modern Swift technologies, showcasing the utilization of UIKit, CoreData, URLSession, and MVVM within a programmatic UI design approach. It offers users a platform to explore and save movies, demonstrating efficient data fetching and local data persistence strategies.
+MyMovies is an iOS application built using modern Swift technologies, showcasing the utilization of UIKit, CoreData, URLSession, and MVVM within a programmatic UI design approach.
